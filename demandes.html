@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demandes clients</title>
+    <title>Produits recherchés</title>
 
     <style>
         * {
@@ -291,43 +291,43 @@
         }
 
         @media (max-width: 768px) {
-    .filtres-row {
-        justify-content: flex-start;
-    }
+            .filtres-row {
+                justify-content: flex-start;
+            }
 
-    .filtres-zone {
-        position: relative;
-        width: auto;
-        display: inline-block;
-    }
+            .filtres-zone {
+                position: relative;
+                width: auto;
+                display: inline-block;
+            }
 
-    .menu-filtres {
-        right: auto;
-        left: 0;
-        width: 280px;
-        max-width: calc(100vw - 40px);
-        min-width: 260px;
-        box-sizing: border-box;
-        padding: 14px;
-    }
+            .menu-filtres {
+                right: auto;
+                left: 0;
+                width: 280px;
+                max-width: calc(100vw - 40px);
+                min-width: 260px;
+                box-sizing: border-box;
+                padding: 14px;
+            }
 
-    .menu-filtres button,
-    .menu-filtres select {
-        width: 100%;
-        margin-bottom: 10px;
-    }
+            .menu-filtres button,
+            .menu-filtres select {
+                width: 100%;
+                margin-bottom: 10px;
+            }
 
-    .menu-filtres button {
-        white-space: normal;
-        text-align: center;
-        line-height: 1.25;
-        padding: 12px;
-    }
+            .menu-filtres button {
+                white-space: normal;
+                text-align: center;
+                line-height: 1.25;
+                padding: 12px;
+            }
 
-    .menu-filtres select {
-        min-height: 46px;
-    }
-}
+            .menu-filtres select {
+                min-height: 46px;
+            }
+        }
     </style>
 </head>
 
@@ -335,12 +335,12 @@
 <div class="page-container">
 
     <section class="hero">
-        <h1>Demandes des clients</h1>
+        <h1>Produits recherchés</h1>
 
         <p id="compteurDemandes"></p>
 
         <div class="main-cta">
-            <button onclick="window.location.href='recherche.html'">+ Poster une demande</button>
+            <button onclick="window.location.href='recherche.html'">+ Je cherche un produit</button>
         </div>
 
         <div class="secondary-actions">
@@ -466,7 +466,7 @@ function afficherDemandes() {
     }
 
     if (resultatsTrouves === 0) {
-        compteur.textContent = "Aucune demande trouvée";
+        compteur.textContent = "Aucun produit recherché trouvé";
         container.innerHTML = `
             <p style="
                 width: 100%;
@@ -475,13 +475,13 @@ function afficherDemandes() {
                 font-size: 18px;
                 margin-top: 30px;
             ">
-                Aucune demande pour l’instant 😢
+                Aucun produit recherché pour l’instant 😢
             </p>
         `;
     } else if (resultatsTrouves === 1) {
-        compteur.textContent = "1 demande trouvée";
+        compteur.textContent = "1 produit recherché trouvé";
     } else {
-        compteur.textContent = resultatsTrouves + " demandes trouvées";
+        compteur.textContent = resultatsTrouves + " produits recherchés trouvés";
     }
 }
 

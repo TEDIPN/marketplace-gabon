@@ -2,7 +2,8 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
+<title>Marketplace Gabonaise</title>
+<style>
 * {
     box-sizing: border-box;
 }
@@ -327,6 +328,41 @@ button {
     box-shadow: 0 4px 10px rgba(0,0,0,0.25);
 }
 
+.suggestion-demande {
+    width: 100%;
+    margin-top: 10px;
+    background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 22px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+}
+
+.suggestion-demande p {
+    margin: 0 0 14px 0;
+    color: #d4d4d8;
+    font-size: 17px;
+    line-height: 1.5;
+}
+
+.btn-demande-suggestion {
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: white;
+    border: none;
+    padding: 14px 18px;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: 0.25s ease;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.30);
+}
+
+.btn-demande-suggestion:hover {
+    transform: translateY(-2px);
+}
+
 @media (max-width: 768px) {
     .filtres-row {
         justify-content: flex-start;
@@ -366,8 +402,6 @@ button {
     }
 }
 </style>
-
-    <title>Gabon Marketplace</title>
 </head>
 <body>
 <div class="page-container">
@@ -386,12 +420,12 @@ button {
         <p id="compteurResultats"></p>
 
         <div class="main-cta">
-            <button onclick="window.location.href='post.html'">+ Déposer une annonce</button>
+            <button onclick="window.location.href='post.html'">+ Je vends un produit</button>
         </div>
 
         <div class="secondary-actions">
-            <button onclick="window.location.href='demandes.html'">Voir les demandes clients</button>
-            <button onclick="window.location.href='recherche.html'">Poster une demande</button>
+            <button onclick="window.location.href='demandes.html'">Produits recherchés</button>
+            <button onclick="window.location.href='recherche.html'">Je cherche un produit</button>
         </div>
 
         <div class="filtres-row">
@@ -425,6 +459,8 @@ button {
     </section>
 
     <div id="annonces"></div>
+
+</div>
 
 <script>
 let ordreTri = "aucun";
@@ -469,11 +505,12 @@ function afficherAnnonces() {
         let provinceAnnonce = annoncesFiltrees[i].province || "";
         let vraiIndex = annoncesStockees.indexOf(annoncesFiltrees[i]);
         let favori = estFavori(vraiIndex);
+
         if (
             (titre.includes(recherche) || description.includes(recherche)) &&
             (provinceSelectionnee === "" || provinceAnnonce === provinceSelectionnee) &&
             (!afficherSeulementFavoris || favori)
-          ) {
+        ) {
             resultatsTrouves++;
 
             let annonce = document.createElement("div");
@@ -481,23 +518,25 @@ function afficherAnnonces() {
 
             let imageHTML = "";
 
-        if (annoncesFiltrees[i].images && annoncesFiltrees[i].images.length > 0) {
-           imageHTML = "<img src='" + annoncesFiltrees[i].images[0] + "'>";
-        } else if (annoncesFiltrees[i].image) {
-        imageHTML = "<img src='" + annoncesFiltrees[i].image + "'>";
-        }
+            if (annoncesFiltrees[i].images && annoncesFiltrees[i].images.length > 0) {
+                imageHTML = "<img src='" + annoncesFiltrees[i].images[0] + "'>";
+            } else if (annoncesFiltrees[i].image) {
+                imageHTML = "<img src='" + annoncesFiltrees[i].image + "'>";
+            }
 
             let numero = annoncesFiltrees[i].telephone.replace(/\s/g, "").replace("+", "");
             let badgeNouveau = "";
 
-        if (annoncesFiltrees[i].datePublication && (Date.now() - annoncesFiltrees[i].datePublication < 86400000)) {
-            badgeNouveau = "<span class='badge-nouveau'>Nouveau</span>";
-        }
+            if (annoncesFiltrees[i].datePublication && (Date.now() - annoncesFiltrees[i].datePublication < 86400000)) {
+                badgeNouveau = "<span class='badge-nouveau'>Nouveau</span>";
+            }
+
             let boutonAppel = `
                 <a href="tel:${numero}" onclick="event.stopPropagation()">
                     <button class="btn-appel">Appeler</button>
                 </a>
             `;
+
             let boutonWhatsApp = `
                 <a href="https://wa.me/${numero}" target="_blank" onclick="event.stopPropagation()">
                     <button class="btn-whatsapp">Contacter sur WhatsApp</button>
@@ -513,12 +552,12 @@ function afficherAnnonces() {
                 "<p><strong>Province :</strong> " + (annoncesFiltrees[i].province || "Non précisée") + "</p>" +
                 "<p>" + annoncesFiltrees[i].description + "</p>" +
                 "<div class='actions'>" +
-                "<button class='btn-fav' onclick='event.stopPropagation(); toggleFavori(" + vraiIndex + ")'>" +
-                 (estFavori(vraiIndex) ? "❤️" : "🤍") +
-                 "</button>" +
-                 boutonAppel +
-                 boutonWhatsApp +
-                "<button class='btn-delete' onclick='event.stopPropagation(); supprimerAnnonce(" + vraiIndex + ")'>Supprimer</button>" +
+                    "<button class='btn-fav' onclick='event.stopPropagation(); toggleFavori(" + vraiIndex + ")'>" +
+                        (estFavori(vraiIndex) ? "❤️" : "🤍") +
+                    "</button>" +
+                    boutonAppel +
+                    boutonWhatsApp +
+                    "<button class='btn-delete' onclick='event.stopPropagation(); supprimerAnnonce(" + vraiIndex + ")'>Supprimer</button>" +
                 "</div>";
 
             annonce.style.cursor = "pointer";
@@ -533,22 +572,42 @@ function afficherAnnonces() {
 
     if (resultatsTrouves === 0) {
         compteur.textContent = "Aucune annonce trouvée";
-        container.innerHTML = `
-            <p style="
-                width: 100%;
-                text-align: center;
-                color: #aaa;
-                font-size: 18px;
-                margin-top: 30px;
-            ">
-                Aucun résultat trouvé 😢
-            </p>
-        `;
+
+        let texteRecherche = recherche.trim();
+
+        if (texteRecherche !== "") {
+            container.innerHTML = `
+                <div class="suggestion-demande">
+                    <p>Aucune annonce trouvée pour <strong>"${texteRecherche}"</strong>.</p>
+                    <p>Vous ne trouvez pas ce produit ? Publiez une recherche et les vendeurs pourront vous contacter.</p>
+                    <button class="btn-demande-suggestion" onclick="allerVersDemande('${texteRecherche.replace(/'/g, "\\'")}')">
+                        Je cherche "${texteRecherche}"
+                    </button>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `
+                <p style="
+                    width: 100%;
+                    text-align: center;
+                    color: #aaa;
+                    font-size: 18px;
+                    margin-top: 30px;
+                ">
+                    Aucun résultat trouvé 😢
+                </p>
+            `;
+        }
     } else if (resultatsTrouves === 1) {
         compteur.textContent = "1 annonce trouvée";
     } else {
         compteur.textContent = resultatsTrouves + " annonces trouvées";
     }
+}
+
+function allerVersDemande(texte) {
+    localStorage.setItem("produitRechercheSuggestion", texte);
+    window.location.href = "recherche.html";
 }
 
 function supprimerAnnonce(index) {

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Détail demande</title>
+    <title>Produit recherché</title>
     <style>
     * {
         box-sizing: border-box;
@@ -322,12 +322,12 @@ if (demande) {
         "</div>" +
 
         "<div class='actions'>" +
-            "<a href='demandes.html'><button>Retour</button></a>" +
+            "<a href='demandes.html'><button>Retour aux produits recherchés</button></a>" +
             "<a href='tel:" + numero + "'><button class='btn-appel'>Appeler</button></a>" +
             "<a href='https://wa.me/" + numero + "' target='_blank'><button class='btn-whatsapp'>WhatsApp</button></a>" +
         "</div>";
 } else {
-    container.innerHTML = "<p>Demande introuvable.</p><a href='demandes.html'><button>Retour</button></a>";
+    container.innerHTML = "<p>Produit recherché introuvable.</p><a href='demandes.html'><button>Retour</button></a>";
 }
 
 function ouvrirImage(src) {

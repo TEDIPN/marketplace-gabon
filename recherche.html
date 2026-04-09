@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Je recherche</title>
+    <title>Je cherche un produit</title>
     <style>
     * {
         box-sizing: border-box;
@@ -272,8 +272,8 @@
     <div class="form-container">
 
         <div class="hero">
-            <h2>Je recherche un produit</h2>
-            <p>Décris ce que tu cherches pour que les vendeurs puissent te contacter rapidement.</p>
+            <h2>Je cherche un produit</h2>
+            <p>Décris ce que tu recherches pour que les vendeurs puissent te contacter rapidement.</p>
         </div>
 
         <form>
@@ -325,7 +325,7 @@
             <div class="form-section">
                 <div class="section-title">Description</div>
 
-                <label>Détails de la demande</label>
+                <label>Détails de la recherche</label>
                 <textarea id="description" placeholder="Décris le produit recherché, son état, la couleur, la capacité, etc."></textarea>
             </div>
 
@@ -344,7 +344,7 @@
 
             <div class="actions">
                 <button type="button" id="supprimerImage" style="display:none;">Supprimer les images</button>
-                <button type="button" class="btn-publier" onclick="publierRecherche()">Publier la demande</button>
+                <button type="button" class="btn-publier" onclick="publierRecherche()">Publier la recherche</button>
             </div>
 
         </form>
@@ -357,6 +357,15 @@
 </div>
 
 <script>
+window.onload = function() {
+    let suggestion = localStorage.getItem("produitRechercheSuggestion");
+
+    if (suggestion) {
+        document.getElementById("produit").value = suggestion;
+        localStorage.removeItem("produitRechercheSuggestion");
+    }
+};
+
 document.getElementById("image").addEventListener("change", function(e) {
     let files = e.target.files;
     let preview = document.getElementById("preview");
@@ -446,7 +455,7 @@ function publierRecherche() {
         recherches.push(recherche);
         localStorage.setItem("recherches", JSON.stringify(recherches));
 
-        alert("Demande publiée");
+        alert("Recherche publiée avec succès !");
         window.location.href = "demandes.html";
     }
 }

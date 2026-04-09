@@ -26,7 +26,7 @@ body {
 }
 
 .hero {
-    background: linear-gradient(145deg, rgba(30,30,30,0.95), rgba(20,20,20,0.95));
+    background: linear-gradient(145deg, rgba(30,30,30,0.96), rgba(20,20,20,0.96));
     border: 1px solid rgba(255,255,255,0.05);
     border-radius: 24px;
     padding: 22px;
@@ -68,75 +68,125 @@ body {
     text-align: center;
     color: #b3b3b3;
     font-size: 17px;
-    margin: 0 0 18px 0;
+    margin: 0 0 14px 0;
 }
 
-.main-cta {
+.suggestion-demande {
+    width: 100%;
+    margin: 0 0 16px 0;
+    background: linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+.suggestion-demande p {
+    margin: 0 0 12px 0;
+    color: #d4d4d8;
+    font-size: 17px;
+    line-height: 1.5;
+}
+
+.main-ctas {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
     margin-bottom: 14px;
 }
 
-.main-cta button {
+.btn-main-orange,
+.btn-main-orange-small,
+.btn-secondary,
+.btn-bug,
+.btn-tri,
+.btn-whatsapp,
+.btn-appel,
+button {
+    border: none;
+    cursor: pointer;
+    transition: 0.25s ease;
+    font-weight: bold;
+}
+
+.btn-main-orange,
+.btn-main-orange-small {
     width: 100%;
     padding: 16px;
     border-radius: 16px;
-    border: none;
-    cursor: pointer;
     font-size: 18px;
-    font-weight: bold;
     color: white;
     background: linear-gradient(135deg, #f97316, #ea580c);
     box-shadow: 0 10px 22px rgba(0,0,0,0.35);
-    transition: 0.25s ease;
 }
 
-.main-cta button:hover {
+.btn-main-orange:hover,
+.btn-main-orange-small:hover {
     transform: translateY(-2px);
+}
+
+.btn-main-orange-small {
+    font-size: 17px;
 }
 
 .secondary-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
 }
 
-.secondary-actions button {
+.btn-secondary {
     width: 100%;
     background: linear-gradient(135deg, #2563eb, #1d4ed8);
     color: white;
-    border: none;
     padding: 14px;
     border-radius: 14px;
-    cursor: pointer;
     font-size: 15px;
-    font-weight: bold;
-    transition: 0.25s ease;
     box-shadow: 0 6px 16px rgba(0,0,0,0.25);
 }
 
-.secondary-actions button:hover {
+.btn-secondary:hover {
     transform: translateY(-2px);
+}
+
+.utility-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    align-items: start;
 }
 
 .filtres-row {
     display: flex;
-    justify-content: flex-end;
-    margin-bottom: 6px;
+    justify-content: flex-start;
 }
 
 .btn-tri {
     background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    border: none;
     padding: 12px 16px;
     border-radius: 14px;
     color: white;
-    cursor: pointer;
-    transition: 0.25s ease;
     box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-    font-weight: bold;
+    font-size: 15px;
 }
 
 .btn-tri:hover {
+    transform: translateY(-2px);
+}
+
+.btn-bug {
+    width: 100%;
+    background: linear-gradient(135deg, #0f766e, #0d9488);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 15px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+}
+
+.btn-bug:hover {
     transform: translateY(-2px);
 }
 
@@ -149,7 +199,7 @@ body {
     display: none;
     position: absolute;
     top: 56px;
-    right: 0;
+    left: 0;
     width: 260px;
     background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
     padding: 15px;
@@ -176,11 +226,8 @@ body {
 button {
     background: linear-gradient(135deg, #2563eb, #1d4ed8);
     color: white;
-    border: none;
     padding: 10px 15px;
     border-radius: 10px;
-    cursor: pointer;
-    transition: 0.25s ease;
     box-shadow: 0 4px 10px rgba(0,0,0,0.25);
 }
 
@@ -254,15 +301,12 @@ button {
 
 .btn-whatsapp {
     background: linear-gradient(135deg, #25D366, #1ebe5d);
-    border: none;
     padding: 12px;
     border-radius: 12px;
     color: white;
-    cursor: pointer;
     width: 100%;
     margin-top: 10px;
-    font-weight: bold;
-    transition: 0.25s ease;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
 }
 
 .btn-whatsapp:hover {
@@ -272,14 +316,11 @@ button {
 
 .btn-appel {
     background: linear-gradient(135deg, #f59e0b, #d97706);
-    border: none;
     padding: 12px;
     border-radius: 12px;
     color: white;
-    cursor: pointer;
     width: 100%;
-    font-weight: bold;
-    transition: 0.25s ease;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
 }
 
 .btn-appel:hover {
@@ -298,11 +339,8 @@ button {
 
 .btn-fav {
     background: rgba(255,255,255,0.05);
-    border: none;
     font-size: 22px;
-    cursor: pointer;
     margin-bottom: 6px;
-    transition: 0.2s;
     width: 56px;
     height: 56px;
     border-radius: 16px;
@@ -328,55 +366,38 @@ button {
     box-shadow: 0 4px 10px rgba(0,0,0,0.25);
 }
 
-.suggestion-demande {
+.empty-state {
     width: 100%;
-    margin-top: 10px;
-    background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 20px;
-    padding: 22px;
     text-align: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.35);
-}
-
-.suggestion-demande p {
-    margin: 0 0 14px 0;
-    color: #d4d4d8;
-    font-size: 17px;
-    line-height: 1.5;
-}
-
-.btn-demande-suggestion {
-    background: linear-gradient(135deg, #f97316, #ea580c);
-    color: white;
-    border: none;
-    padding: 14px 18px;
-    border-radius: 14px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: 0.25s ease;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.30);
-}
-
-.btn-demande-suggestion:hover {
-    transform: translateY(-2px);
+    color: #aaa;
+    font-size: 18px;
+    margin-top: 20px;
+    background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+    border-radius: 20px;
+    padding: 28px 20px;
+    border: 1px solid rgba(255,255,255,0.04);
 }
 
 @media (max-width: 768px) {
-    .filtres-row {
-        justify-content: flex-start;
+    body {
+        padding: 14px;
     }
 
-    .filtres-zone {
-        position: relative;
-        width: auto;
-        display: inline-block;
+    .hero {
+        padding: 18px;
+    }
+
+    .hero h1 {
+        font-size: 30px;
+    }
+
+    .main-ctas,
+    .secondary-actions,
+    .utility-actions {
+        grid-template-columns: 1fr;
     }
 
     .menu-filtres {
-        right: auto;
-        left: 0;
         width: 280px;
         max-width: calc(100vw - 40px);
         min-width: 260px;
@@ -419,42 +440,53 @@ button {
 
         <p id="compteurResultats"></p>
 
-        <div class="main-cta">
-            <button onclick="window.location.href='post.html'">+ Je vends un produit</button>
+        <div id="suggestionRecherche"></div>
+
+        <div class="main-ctas">
+            <button class="btn-main-orange" onclick="window.location.href='post.html'">+ Je vends un produit</button>
+            <button class="btn-main-orange-small" onclick="window.location.href='recherche.html'">+ Je cherche un produit</button>
         </div>
 
         <div class="secondary-actions">
-            <button onclick="window.location.href='demandes.html'">Produits recherchés</button>
-            <button onclick="window.location.href='recherche.html'">Je cherche un produit</button>
+            <button class="btn-secondary" onclick="window.location.href='demandes.html'">Produits recherchés</button>
+            <a href="https://wa.me/241074552389?text=Bonjour,%20je%20veux%20signaler%20un%20bug%20sur%20la%20Marketplace%20Gabonaise." target="_blank">
+                <button class="btn-bug">Signaler un bug</button>
+            </a>
         </div>
 
-        <div class="filtres-row">
-            <div class="filtres-zone">
-                <button class="btn-tri" onclick="toggleFiltres()">Filtres</button>
+        <div class="utility-actions">
+            <div class="filtres-row">
+                <div class="filtres-zone">
+                    <button class="btn-tri" onclick="toggleFiltres()">Filtres</button>
 
-                <div id="menuFiltres" class="menu-filtres">
-                    <button class="btn-tri" onclick="trierPrixCroissant(); fermerFiltres()">Prix croissant</button>
-                    <button class="btn-tri" onclick="trierPrixDecroissant(); fermerFiltres()">Prix décroissant</button>
-                    <button class="btn-tri" onclick="reinitialiserTri(); fermerFiltres()">Réinitialiser tri</button>
-                    <button class="btn-tri" onclick="filtrerFavoris(); fermerFiltres()">Afficher les favoris</button>
-                    <button class="btn-tri" onclick="reinitialiserFavoris(); fermerFiltres()">Réinitialiser favoris</button>
+                    <div id="menuFiltres" class="menu-filtres">
+                        <button class="btn-tri" onclick="trierPrixCroissant(); fermerFiltres()">Prix croissant</button>
+                        <button class="btn-tri" onclick="trierPrixDecroissant(); fermerFiltres()">Prix décroissant</button>
+                        <button class="btn-tri" onclick="reinitialiserTri(); fermerFiltres()">Réinitialiser tri</button>
+                        <button class="btn-tri" onclick="filtrerFavoris(); fermerFiltres()">Afficher les favoris</button>
+                        <button class="btn-tri" onclick="reinitialiserFavoris(); fermerFiltres()">Réinitialiser favoris</button>
 
-                    <select id="filtreProvince" onchange="filtrerParProvince(); fermerFiltres()">
-                        <option value="">Toutes les provinces</option>
-                        <option value="Estuaire">Estuaire</option>
-                        <option value="Haut-Ogooué">Haut-Ogooué</option>
-                        <option value="Moyen-Ogooué">Moyen-Ogooué</option>
-                        <option value="Ngounié">Ngounié</option>
-                        <option value="Nyanga">Nyanga</option>
-                        <option value="Ogooué-Ivindo">Ogooué-Ivindo</option>
-                        <option value="Ogooué-Lolo">Ogooué-Lolo</option>
-                        <option value="Ogooué-Maritime">Ogooué-Maritime</option>
-                        <option value="Woleu-Ntem">Woleu-Ntem</option>
-                    </select>
+                        <select id="filtreProvince" onchange="filtrerParProvince(); fermerFiltres()">
+                            <option value="">Toutes les provinces</option>
+                            <option value="Estuaire">Estuaire</option>
+                            <option value="Haut-Ogooué">Haut-Ogooué</option>
+                            <option value="Moyen-Ogooué">Moyen-Ogooué</option>
+                            <option value="Ngounié">Ngounié</option>
+                            <option value="Nyanga">Nyanga</option>
+                            <option value="Ogooué-Ivindo">Ogooué-Ivindo</option>
+                            <option value="Ogooué-Lolo">Ogooué-Lolo</option>
+                            <option value="Ogooué-Maritime">Ogooué-Maritime</option>
+                            <option value="Woleu-Ntem">Woleu-Ntem</option>
+                        </select>
 
-                    <button class="btn-tri" onclick="reinitialiserProvince(); fermerFiltres()">Réinitialiser province</button>
+                        <button class="btn-tri" onclick="reinitialiserProvince(); fermerFiltres()">Réinitialiser province</button>
+                    </div>
                 </div>
             </div>
+
+            <a href="mailto:atchougou6@gmail.com?subject=Signalement%20Marketplace%20Gabonaise&body=Bonjour,%20je%20veux%20signaler%20un%20probl%C3%A8me%20sur%20la%20Marketplace%20Gabonaise.">
+                <button class="btn-secondary">Me contacter par mail</button>
+            </a>
         </div>
     </section>
 
@@ -470,6 +502,7 @@ let afficherSeulementFavoris = false;
 function afficherAnnonces() {
     let annoncesStockees = JSON.parse(localStorage.getItem("annonces")) || [];
     let container = document.getElementById("annonces");
+    let suggestionZone = document.getElementById("suggestionRecherche");
     let inputRecherche = document.getElementById("rechercheAnnonce");
     let recherche = "";
     let compteur = document.getElementById("compteurResultats");
@@ -497,6 +530,7 @@ function afficherAnnonces() {
     }
 
     container.innerHTML = "";
+    suggestionZone.innerHTML = "";
     let resultatsTrouves = 0;
 
     for (let i = 0; i < annoncesFiltrees.length; i++) {
@@ -576,7 +610,7 @@ function afficherAnnonces() {
         let texteRecherche = recherche.trim();
 
         if (texteRecherche !== "") {
-            container.innerHTML = `
+            suggestionZone.innerHTML = `
                 <div class="suggestion-demande">
                     <p>Aucune annonce trouvée pour <strong>"${texteRecherche}"</strong>.</p>
                     <p>Vous ne trouvez pas ce produit ? Publiez une recherche et les vendeurs pourront vous contacter.</p>
@@ -587,15 +621,9 @@ function afficherAnnonces() {
             `;
         } else {
             container.innerHTML = `
-                <p style="
-                    width: 100%;
-                    text-align: center;
-                    color: #aaa;
-                    font-size: 18px;
-                    margin-top: 30px;
-                ">
-                    Aucun résultat trouvé 😢
-                </p>
+                <div class="empty-state">
+                    Aucune annonce disponible pour le moment 😢
+                </div>
             `;
         }
     } else if (resultatsTrouves === 1) {

@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background:
+        radial-gradient(circle at top, rgba(37, 99, 235, 0.10), transparent 25%),
+        linear-gradient(to bottom, #0b0b0f, #111117 45%, #0a0a0d);
+    color: white;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.page-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hero {
+    background: linear-gradient(145deg, rgba(30,30,30,0.95), rgba(20,20,20,0.95));
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 24px;
+    padding: 22px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+    margin-bottom: 24px;
+}
+
+.hero h1 {
+    margin: 0 0 18px 0;
+    text-align: center;
+    font-size: 42px;
+    line-height: 1.1;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.search-box {
+    margin-bottom: 16px;
+}
+
+#rechercheAnnonce {
+    width: 100%;
+    padding: 16px 18px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.06);
+    outline: none;
+    background: rgba(255,255,255,0.06);
+    color: white;
+    font-size: 16px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    transition: 0.25s ease;
+}
+
+#rechercheAnnonce:focus {
+    border-color: rgba(37, 99, 235, 0.7);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.16);
+}
+
+#compteurResultats {
+    text-align: center;
+    color: #b3b3b3;
+    font-size: 17px;
+    margin: 0 0 18px 0;
+}
+
+.main-cta {
+    margin-bottom: 14px;
+}
+
+.main-cta button {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.35);
+    transition: 0.25s ease;
+}
+
+.main-cta button:hover {
+    transform: translateY(-2px);
+}
+
+.secondary-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.secondary-actions button {
+    width: 100%;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    transition: 0.25s ease;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+}
+
+.secondary-actions button:hover {
+    transform: translateY(-2px);
+}
+
+.filtres-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 6px;
+}
+
+.btn-tri {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border: none;
+    padding: 12px 16px;
+    border-radius: 14px;
+    color: white;
+    cursor: pointer;
+    transition: 0.25s ease;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    font-weight: bold;
+}
+
+.btn-tri:hover {
+    transform: translateY(-2px);
+}
+
+.filtres-zone {
+    position: relative;
+    display: inline-block;
+}
+
+.menu-filtres {
+    display: none;
+    position: absolute;
+    top: 56px;
+    right: 0;
+    width: 260px;
+    background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+    padding: 15px;
+    border-radius: 16px;
+    box-shadow: 0 14px 30px rgba(0,0,0,0.45);
+    z-index: 1000;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.menu-filtres button,
+.menu-filtres select {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.menu-filtres select {
+    background-color: #151515;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+}
+
+button {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.25s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+#annonces {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 22px;
+    align-items: start;
+}
+
+.annonce {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+    padding: 15px;
+    border-radius: 20px;
+    width: 100%;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+    transition: 0.25s ease;
+    overflow: hidden;
+    min-height: 420px;
+    border: 1px solid rgba(255,255,255,0.04);
+}
+
+.annonce:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 30px rgba(0,0,0,0.45);
+}
+
+.annonce img {
+    width: 100%;
+    height: 210px;
+    object-fit: cover;
+    border-radius: 16px;
+    margin-bottom: 12px;
+}
+
+.annonce h3 {
+    margin: 6px 0 10px 0;
+    word-break: break-word;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.annonce p {
+    margin-bottom: 10px;
+    word-break: break-word;
+    color: #e5e5e5;
+    line-height: 1.45;
+}
+
+.annonce p:last-of-type {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.prix {
+    font-size: 20px;
+    font-weight: bold;
+    color: #22c55e !important;
+    margin-bottom: 10px;
+}
+
+.actions {
+    margin-top: auto;
+}
+
+.btn-whatsapp {
+    background: linear-gradient(135deg, #25D366, #1ebe5d);
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    color: white;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    font-weight: bold;
+    transition: 0.25s ease;
+}
+
+.btn-whatsapp:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #1ebe5d, #17a74a);
+}
+
+.btn-appel {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    color: white;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    transition: 0.25s ease;
+}
+
+.btn-appel:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #d97706, #b45309);
+}
+
+.btn-delete {
+    background: #ef4444;
+    margin-top: 10px;
+}
+
+.btn-delete:hover {
+    background: #dc2626;
+}
+
+.btn-fav {
+    background: rgba(255,255,255,0.05);
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    margin-bottom: 6px;
+    transition: 0.2s;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    box-shadow: none;
+}
+
+.btn-fav:hover {
+    transform: scale(1.08);
+}
+
+.badge-nouveau {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 8px 14px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+@media (max-width: 768px) {
+    .filtres-row {
+        justify-content: flex-start;
+    }
+
+    .filtres-zone {
+        position: relative;
+        width: auto;
+        display: inline-block;
+    }
+
+    .menu-filtres {
+        right: auto;
+        left: 0;
+        width: 280px;
+        max-width: calc(100vw - 40px);
+        min-width: 260px;
+        box-sizing: border-box;
+        padding: 14px;
+    }
+
+    .menu-filtres button,
+    .menu-filtres select {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .menu-filtres button {
+        white-space: normal;
+        text-align: center;
+        line-height: 1.25;
+        padding: 12px;
+    }
+
+    .menu-filtres select {
+        min-height: 46px;
+    }
+}
+</style>
+
+    <title>Gabon Marketplace</title>
+</head>
+<body>
+<div class="page-container">
+
+    <section class="hero">
+        <h1>Marketplace Gabonaise</h1>
+
+        <div class="search-box">
+            <input
+                type="text"
+                id="rechercheAnnonce"
+                placeholder="Rechercher une annonce..."
+                oninput="afficherAnnonces()">
+        </div>
+
+        <p id="compteurResultats"></p>
+
+        <div class="main-cta">
+            <button onclick="window.location.href='post.html'">+ Déposer une annonce</button>
+        </div>
+
+        <div class="secondary-actions">
+            <button onclick="window.location.href='demandes.html'">Voir les demandes clients</button>
+            <button onclick="window.location.href='recherche.html'">Poster une demande</button>
+        </div>
+
+        <div class="filtres-row">
+            <div class="filtres-zone">
+                <button class="btn-tri" onclick="toggleFiltres()">Filtres</button>
+
+                <div id="menuFiltres" class="menu-filtres">
+                    <button class="btn-tri" onclick="trierPrixCroissant(); fermerFiltres()">Prix croissant</button>
+                    <button class="btn-tri" onclick="trierPrixDecroissant(); fermerFiltres()">Prix décroissant</button>
+                    <button class="btn-tri" onclick="reinitialiserTri(); fermerFiltres()">Réinitialiser tri</button>
+                    <button class="btn-tri" onclick="filtrerFavoris(); fermerFiltres()">Afficher les favoris</button>
+                    <button class="btn-tri" onclick="reinitialiserFavoris(); fermerFiltres()">Réinitialiser favoris</button>
+
+                    <select id="filtreProvince" onchange="filtrerParProvince(); fermerFiltres()">
+                        <option value="">Toutes les provinces</option>
+                        <option value="Estuaire">Estuaire</option>
+                        <option value="Haut-Ogooué">Haut-Ogooué</option>
+                        <option value="Moyen-Ogooué">Moyen-Ogooué</option>
+                        <option value="Ngounié">Ngounié</option>
+                        <option value="Nyanga">Nyanga</option>
+                        <option value="Ogooué-Ivindo">Ogooué-Ivindo</option>
+                        <option value="Ogooué-Lolo">Ogooué-Lolo</option>
+                        <option value="Ogooué-Maritime">Ogooué-Maritime</option>
+                        <option value="Woleu-Ntem">Woleu-Ntem</option>
+                    </select>
+
+                    <button class="btn-tri" onclick="reinitialiserProvince(); fermerFiltres()">Réinitialiser province</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="annonces"></div>
+
+<script>
+let ordreTri = "aucun";
+let provinceSelectionnee = "";
+let afficherSeulementFavoris = false;
+
+function afficherAnnonces() {
+    let annoncesStockees = JSON.parse(localStorage.getItem("annonces")) || [];
+    let container = document.getElementById("annonces");
+    let inputRecherche = document.getElementById("rechercheAnnonce");
+    let recherche = "";
+    let compteur = document.getElementById("compteurResultats");
+
+    if (inputRecherche) {
+        recherche = inputRecherche.value.toLowerCase();
+    }
+
+    let annoncesFiltrees = [...annoncesStockees];
+
+    if (ordreTri === "croissant") {
+        annoncesFiltrees.sort(function(a, b) {
+            let prixA = parseFloat(a.prix.replace(/,/g, "").replace(/\s/g, "")) || 0;
+            let prixB = parseFloat(b.prix.replace(/,/g, "").replace(/\s/g, "")) || 0;
+            return prixA - prixB;
+        });
+    }
+
+    if (ordreTri === "decroissant") {
+        annoncesFiltrees.sort(function(a, b) {
+            let prixA = parseFloat(a.prix.replace(/,/g, "").replace(/\s/g, "")) || 0;
+            let prixB = parseFloat(b.prix.replace(/,/g, "").replace(/\s/g, "")) || 0;
+            return prixB - prixA;
+        });
+    }
+
+    container.innerHTML = "";
+    let resultatsTrouves = 0;
+
+    for (let i = 0; i < annoncesFiltrees.length; i++) {
+        let titre = annoncesFiltrees[i].titre.toLowerCase();
+        let description = annoncesFiltrees[i].description.toLowerCase();
+        let provinceAnnonce = annoncesFiltrees[i].province || "";
+        let vraiIndex = annoncesStockees.indexOf(annoncesFiltrees[i]);
+        let favori = estFavori(vraiIndex);
+        if (
+            (titre.includes(recherche) || description.includes(recherche)) &&
+            (provinceSelectionnee === "" || provinceAnnonce === provinceSelectionnee) &&
+            (!afficherSeulementFavoris || favori)
+          ) {
+            resultatsTrouves++;
+
+            let annonce = document.createElement("div");
+            annonce.classList.add("annonce");
+
+            let imageHTML = "";
+
+        if (annoncesFiltrees[i].images && annoncesFiltrees[i].images.length > 0) {
+           imageHTML = "<img src='" + annoncesFiltrees[i].images[0] + "'>";
+        } else if (annoncesFiltrees[i].image) {
+        imageHTML = "<img src='" + annoncesFiltrees[i].image + "'>";
+        }
+
+            let numero = annoncesFiltrees[i].telephone.replace(/\s/g, "").replace("+", "");
+            let badgeNouveau = "";
+
+        if (annoncesFiltrees[i].datePublication && (Date.now() - annoncesFiltrees[i].datePublication < 86400000)) {
+            badgeNouveau = "<span class='badge-nouveau'>Nouveau</span>";
+        }
+            let boutonAppel = `
+                <a href="tel:${numero}" onclick="event.stopPropagation()">
+                    <button class="btn-appel">Appeler</button>
+                </a>
+            `;
+            let boutonWhatsApp = `
+                <a href="https://wa.me/${numero}" target="_blank" onclick="event.stopPropagation()">
+                    <button class="btn-whatsapp">Contacter sur WhatsApp</button>
+                </a>
+            `;
+
+            annonce.innerHTML =
+                imageHTML +
+                badgeNouveau +
+                "<h3>" + annoncesFiltrees[i].titre + "</h3>" +
+                "<p class='prix'>" + annoncesFiltrees[i].prix + " FCFA</p>" +
+                "<p>📞 " + annoncesFiltrees[i].telephone + "</p>" +
+                "<p><strong>Province :</strong> " + (annoncesFiltrees[i].province || "Non précisée") + "</p>" +
+                "<p>" + annoncesFiltrees[i].description + "</p>" +
+                "<div class='actions'>" +
+                "<button class='btn-fav' onclick='event.stopPropagation(); toggleFavori(" + vraiIndex + ")'>" +
+                 (estFavori(vraiIndex) ? "❤️" : "🤍") +
+                 "</button>" +
+                 boutonAppel +
+                 boutonWhatsApp +
+                "<button class='btn-delete' onclick='event.stopPropagation(); supprimerAnnonce(" + vraiIndex + ")'>Supprimer</button>" +
+                "</div>";
+
+            annonce.style.cursor = "pointer";
+            annonce.onclick = function() {
+                localStorage.setItem("produitSelectionne", vraiIndex);
+                window.location.href = "produit.html";
+            };
+
+            container.appendChild(annonce);
+        }
+    }
+
+    if (resultatsTrouves === 0) {
+        compteur.textContent = "Aucune annonce trouvée";
+        container.innerHTML = `
+            <p style="
+                width: 100%;
+                text-align: center;
+                color: #aaa;
+                font-size: 18px;
+                margin-top: 30px;
+            ">
+                Aucun résultat trouvé 😢
+            </p>
+        `;
+    } else if (resultatsTrouves === 1) {
+        compteur.textContent = "1 annonce trouvée";
+    } else {
+        compteur.textContent = resultatsTrouves + " annonces trouvées";
+    }
+}
+
+function supprimerAnnonce(index) {
+    let annonces = JSON.parse(localStorage.getItem("annonces")) || [];
+    annonces.splice(index, 1);
+    localStorage.setItem("annonces", JSON.stringify(annonces));
+    afficherAnnonces();
+}
+
+function trierPrixCroissant() {
+    ordreTri = "croissant";
+    afficherAnnonces();
+}
+
+function trierPrixDecroissant() {
+    ordreTri = "decroissant";
+    afficherAnnonces();
+}
+
+function reinitialiserTri() {
+    ordreTri = "aucun";
+    afficherAnnonces();
+}
+
+function toggleFiltres() {
+    let menu = document.getElementById("menuFiltres");
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+function filtrerParProvince() {
+    provinceSelectionnee = document.getElementById("filtreProvince").value;
+    afficherAnnonces();
+    fermerFiltres();
+}
+
+function reinitialiserProvince() {
+    provinceSelectionnee = "";
+    document.getElementById("filtreProvince").value = "";
+    afficherAnnonces();
+    fermerFiltres();
+}
+
+function fermerFiltres() {
+    document.getElementById("menuFiltres").style.display = "none";
+}
+
+function toggleFavori(index) {
+    let favoris = JSON.parse(localStorage.getItem("favoris")) || [];
+
+    if (favoris.includes(index)) {
+        favoris = favoris.filter(i => i !== index);
+    } else {
+        favoris.push(index);
+    }
+
+    localStorage.setItem("favoris", JSON.stringify(favoris));
+    afficherAnnonces();
+}
+
+function estFavori(index) {
+    let favoris = JSON.parse(localStorage.getItem("favoris")) || [];
+    return favoris.includes(index);
+}
+
+function filtrerFavoris() {
+    afficherSeulementFavoris = true;
+    afficherAnnonces();
+}
+
+function reinitialiserFavoris() {
+    afficherSeulementFavoris = false;
+    afficherAnnonces();
+}
+
+window.onclick = function(e) {
+    let menu = document.getElementById("menuFiltres");
+    let zone = document.querySelector(".filtres-zone");
+
+    if (zone && !zone.contains(e.target)) {
+        menu.style.display = "none";
+    }
+};
+
+window.onload = afficherAnnonces;
+</script>
+</body>
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détail produit</title>
+    <style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        background:
+            radial-gradient(circle at top, rgba(37, 99, 235, 0.10), transparent 25%),
+            linear-gradient(to bottom, #0b0b0f, #111117 45%, #0a0a0d);
+        color: white;
+        font-family: Arial, sans-serif;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .page-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .container {
+        background: linear-gradient(145deg, rgba(30,30,30,0.96), rgba(20,20,20,0.96));
+        border: 1px solid rgba(255,255,255,0.05);
+        padding: 24px;
+        border-radius: 24px;
+        box-shadow: 0 14px 34px rgba(0,0,0,0.38);
+    }
+
+    .galerie {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    .galerie img {
+        width: 100%;
+        height: 230px;
+        object-fit: cover;
+        border-radius: 18px;
+        cursor: pointer;
+        transition: 0.25s ease;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .galerie img:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px rgba(0,0,0,0.35);
+    }
+
+    .badge-nouveau {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        font-size: 13px;
+        font-weight: bold;
+        padding: 8px 14px;
+        border-radius: 999px;
+        margin-bottom: 14px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    }
+
+    h1 {
+        font-size: 38px;
+        margin: 0 0 14px 0;
+        line-height: 1.15;
+        word-break: break-word;
+    }
+
+    .prix {
+        font-size: 30px;
+        font-weight: bold;
+        color: #22c55e;
+        margin-bottom: 18px;
+    }
+
+    .infos {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .info-card {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 16px;
+        padding: 14px;
+    }
+
+    .info-label {
+        font-size: 13px;
+        color: #a3a3a3;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .info-value {
+        font-size: 17px;
+        color: white;
+        word-break: break-word;
+    }
+
+    .description-box {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 18px;
+        padding: 18px;
+        margin-top: 8px;
+    }
+
+    .description-title {
+        font-size: 15px;
+        color: #cfcfcf;
+        font-weight: bold;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .description-text {
+        font-size: 18px;
+        line-height: 1.65;
+        color: #e5e5e5;
+        word-break: break-word;
+    }
+
+    .actions {
+        margin-top: 24px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .actions a {
+        width: 100%;
+    }
+
+    button {
+        width: 100%;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        border: none;
+        padding: 14px 16px;
+        border-radius: 16px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        transition: 0.25s ease;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    }
+
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px rgba(0,0,0,0.35);
+    }
+
+    .btn-whatsapp {
+        background: linear-gradient(135deg, #25D366, #1ebe5d);
+    }
+
+    .btn-whatsapp:hover {
+        background: linear-gradient(135deg, #1ebe5d, #17a74a);
+    }
+
+    .btn-appel {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .btn-appel:hover {
+        background: linear-gradient(135deg, #d97706, #b45309);
+    }
+
+    .image-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.92);
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .image-modal img {
+        max-width: 95%;
+        max-height: 90%;
+        border-radius: 18px;
+    }
+
+    .image-close {
+        position: absolute;
+        top: 18px;
+        right: 24px;
+        font-size: 40px;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+        body {
+            padding: 14px;
+        }
+
+        .container {
+            padding: 18px;
+            border-radius: 20px;
+        }
+
+        .galerie {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .galerie img {
+            height: 210px;
+            border-radius: 16px;
+        }
+
+        h1 {
+            font-size: 30px;
+        }
+
+        .prix {
+            font-size: 26px;
+        }
+
+        .infos {
+            grid-template-columns: 1fr;
+        }
+
+        .info-value {
+            font-size: 16px;
+        }
+
+        .description-text {
+            font-size: 16px;
+        }
+
+        .actions {
+            grid-template-columns: 1fr;
+        }
+
+        button {
+            font-size: 15px;
+            padding: 15px;
+        }
+    }
+    </style>
+</head>
+<body>
+
+<div class="page-container">
+    <div class="container" id="produitDetails"></div>
+</div>
+
+<div class="image-modal" id="imageModal">
+    <span class="image-close" onclick="fermerImage()">&times;</span>
+    <img id="imageGrande">
+</div>
+
+<script>
+let index = localStorage.getItem("produitSelectionne");
+let annonces = JSON.parse(localStorage.getItem("annonces")) || [];
+let produit = annonces[index];
+
+let container = document.getElementById("produitDetails");
+
+if (produit) {
+    let numero = produit.telephone.replace(/\s/g, "").replace("+", "");
+
+    let badgeNouveau = "";
+    if (produit.datePublication && (Date.now() - produit.datePublication < 86400000)) {
+        badgeNouveau = "<span class='badge-nouveau'>Nouveau</span>";
+    }
+
+    let galerieHTML = "";
+
+    if (produit.images && produit.images.length > 0) {
+        galerieHTML += "<div class='galerie'>";
+        for (let i = 0; i < produit.images.length; i++) {
+            galerieHTML += "<img src='" + produit.images[i] + "' onclick='ouvrirImage(\"" + produit.images[i] + "\")'>";
+        }
+        galerieHTML += "</div>";
+    } else if (produit.image) {
+        galerieHTML = "<div class='galerie'><img src='" + produit.image + "' onclick='ouvrirImage(\"" + produit.image + "\")'></div>";
+    }
+
+    container.innerHTML =
+        galerieHTML +
+        badgeNouveau +
+        "<h1>" + produit.titre + "</h1>" +
+        "<p class='prix'>" + produit.prix + " FCFA</p>" +
+
+        "<div class='infos'>" +
+            "<div class='info-card'>" +
+                "<div class='info-label'>Téléphone</div>" +
+                "<div class='info-value'>" + produit.telephone + "</div>" +
+            "</div>" +
+            "<div class='info-card'>" +
+                "<div class='info-label'>Province</div>" +
+                "<div class='info-value'>" + (produit.province || "Non précisée") + "</div>" +
+            "</div>" +
+        "</div>" +
+
+        "<div class='description-box'>" +
+            "<div class='description-title'>Description</div>" +
+            "<div class='description-text'>" + produit.description + "</div>" +
+        "</div>" +
+
+        "<div class='actions'>" +
+            "<a href='index.html'><button>Retour</button></a>" +
+            "<a href='tel:" + numero + "'><button class='btn-appel'>Appeler</button></a>" +
+            "<a href='https://wa.me/" + numero + "' target='_blank'><button class='btn-whatsapp'>WhatsApp</button></a>" +
+        "</div>";
+} else {
+    container.innerHTML = "<p>Produit introuvable.</p><a href='index.html'><button>Retour</button></a>";
+}
+
+function ouvrirImage(src) {
+    document.getElementById("imageGrande").src = src;
+    document.getElementById("imageModal").style.display = "flex";
+}
+
+function fermerImage() {
+    document.getElementById("imageModal").style.display = "none";
+}
+
+document.getElementById("imageModal").onclick = function(e) {
+    if (e.target.id === "imageModal") {
+        fermerImage();
+    }
+};
+</script>
+
+</body>
+</html>

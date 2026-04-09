@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Poster une annonce</title>
+    <title>Je vends un produit</title>
     <style>
     * {
         box-sizing: border-box;
@@ -271,16 +271,16 @@
     <div class="form-container">
 
         <div class="hero">
-            <h2>Poster une annonce</h2>
-            <p>Ajoute ton produit, tes images et tes coordonnées pour le publier sur la marketplace.</p>
+            <h2>Je vends un produit</h2>
+            <p>Ajoute ton produit, ses images et tes coordonnées pour être contacté rapidement.</p>
         </div>
 
         <form>
 
             <div class="form-section">
-                <div class="section-title">Informations du produit</div>
+                <div class="section-title">Produit à vendre</div>
 
-                <label>Titre</label>
+                <label>Nom du produit</label>
                 <input type="text" id="titre" placeholder="Ex: iPhone 13 Pro 256 Go">
 
                 <label>Prix</label>
@@ -325,7 +325,7 @@
                 <div class="section-title">Description</div>
 
                 <label>Détails du produit</label>
-                <textarea id="description" placeholder="Décris le produit, son état, ses caractéristiques, etc."></textarea>
+                <textarea id="description" placeholder="Décris le produit, son état, ses caractéristiques, la couleur, la capacité, etc."></textarea>
             </div>
 
             <div class="form-section">
@@ -333,7 +333,7 @@
 
                 <div class="upload-box">
                     <div class="upload-text">
-                        Ajoute une ou plusieurs images claires du produit pour attirer plus d’acheteurs.
+                        Ajoute une ou plusieurs images claires pour donner envie aux acheteurs de te contacter.
                     </div>
 
                     <input type="file" id="image" accept="image/*" multiple>
@@ -343,7 +343,7 @@
 
             <div class="actions">
                 <button type="button" id="supprimerImage" style="display:none;">Supprimer les images</button>
-                <button type="button" class="btn-publier" onclick="PublieruneAnnonce()">Publier l’annonce</button>
+                <button type="button" class="btn-publier" onclick="PublieruneAnnonce()">Publier le produit</button>
             </div>
 
         </form>
@@ -445,7 +445,7 @@ function PublieruneAnnonce() {
         annonces.push(annonce);
         localStorage.setItem("annonces", JSON.stringify(annonces));
 
-        alert("Annonce publiée avec succès !");
+        alert("Produit publié avec succès !");
         window.location.href = "index.html";
     }
 }

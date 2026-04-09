@@ -276,13 +276,12 @@
 let index = localStorage.getItem("demandeSelectionnee");
 let recherches = JSON.parse(localStorage.getItem("recherches")) || [];
 let demande = recherches[index];
-
 let container = document.getElementById("demandeDetails");
 
 if (demande) {
     let numero = demande.telephone.replace(/\s/g, "").replace("+", "");
-
     let badgeNouveau = "";
+
     if (demande.datePublication && (Date.now() - demande.datePublication < 86400000)) {
         badgeNouveau = "<span class='badge-nouveau'>Nouveau</span>";
     }
@@ -322,7 +321,7 @@ if (demande) {
         "</div>" +
 
         "<div class='actions'>" +
-            "<a href='demandes.html'><button>Retour aux produits recherchés</button></a>" +
+            "<a href='demandes.html'><button>Retour</button></a>" +
             "<a href='tel:" + numero + "'><button class='btn-appel'>Appeler</button></a>" +
             "<a href='https://wa.me/" + numero + "' target='_blank'><button class='btn-whatsapp'>WhatsApp</button></a>" +
         "</div>";

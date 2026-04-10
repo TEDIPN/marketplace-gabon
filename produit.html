@@ -276,13 +276,12 @@
 let index = localStorage.getItem("produitSelectionne");
 let annonces = JSON.parse(localStorage.getItem("annonces")) || [];
 let produit = annonces[index];
-
 let container = document.getElementById("produitDetails");
 
 if (produit) {
-    let numero = produit.telephone.replace(/\s/g, "").replace("+", "");
-
+    let numero = (produit.telephone || "").replace(/\s/g, "").replace("+", "");
     let badgeNouveau = "";
+
     if (produit.datePublication && (Date.now() - produit.datePublication < 86400000)) {
         badgeNouveau = "<span class='badge-nouveau'>Nouveau</span>";
     }

@@ -301,13 +301,13 @@ if (produit) {
     container.innerHTML =
         galerieHTML +
         badgeNouveau +
-        "<h1>" + produit.titre + "</h1>" +
-        "<p class='prix'>" + produit.prix + " FCFA</p>" +
+        "<h1>" + (produit.titre || "Produit") + "</h1>" +
+        "<p class='prix'>" + (produit.prix || "Prix non précisé") + " FCFA</p>" +
 
         "<div class='infos'>" +
             "<div class='info-card'>" +
                 "<div class='info-label'>Téléphone</div>" +
-                "<div class='info-value'>" + produit.telephone + "</div>" +
+                "<div class='info-value'>" + (produit.telephone || "Non précisé") + "</div>" +
             "</div>" +
             "<div class='info-card'>" +
                 "<div class='info-label'>Province</div>" +
@@ -317,7 +317,7 @@ if (produit) {
 
         "<div class='description-box'>" +
             "<div class='description-title'>Description</div>" +
-            "<div class='description-text'>" + produit.description + "</div>" +
+            "<div class='description-text'>" + (produit.description || "Aucune description") + "</div>" +
         "</div>" +
 
         "<div class='actions'>" +
@@ -326,7 +326,10 @@ if (produit) {
             "<a href='https://wa.me/" + numero + "' target='_blank'><button class='btn-whatsapp'>WhatsApp</button></a>" +
         "</div>";
 } else {
-    container.innerHTML = "<p>Produit en vente introuvable.</p><a href='index.html'><button>Retour</button></a>";
+    container.innerHTML = `
+        <p>Produit en vente introuvable.</p>
+        <a href='index.html'><button>Retour</button></a>
+    `;
 }
 
 function ouvrirImage(src) {

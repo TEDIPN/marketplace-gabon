@@ -279,7 +279,7 @@ let demande = recherches[index];
 let container = document.getElementById("demandeDetails");
 
 if (demande) {
-    let numero = demande.telephone.replace(/\s/g, "").replace("+", "");
+    let numero = (demande.telephone || "").replace(/\s/g, "").replace("+", "");
     let badgeNouveau = "";
 
     if (demande.datePublication && (Date.now() - demande.datePublication < 86400000)) {

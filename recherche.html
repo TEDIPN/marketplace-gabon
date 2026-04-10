@@ -213,6 +213,49 @@
         text-decoration: underline;
     }
 
+    .code-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.88);
+        z-index: 3000;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .code-box {
+        width: 100%;
+        max-width: 420px;
+        background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 24px;
+        padding: 24px;
+        text-align: center;
+    }
+
+    .code-box h3 {
+        margin: 0 0 10px 0;
+        font-size: 24px;
+    }
+
+    .code-box p {
+        margin: 0 0 16px 0;
+        color: #d4d4d8;
+        line-height: 1.5;
+    }
+
+    .code-value {
+        font-size: 34px;
+        font-weight: bold;
+        color: #f97316;
+        background: rgba(255,255,255,0.04);
+        border-radius: 18px;
+        padding: 16px;
+        margin-bottom: 16px;
+        letter-spacing: 2px;
+    }
+
     @media (max-width: 768px) {
         body {
             padding: 14px;
@@ -261,6 +304,10 @@
         select,
         button {
             font-size: 14px;
+        }
+
+        .code-value {
+            font-size: 28px;
         }
     }
     </style>
@@ -356,7 +403,35 @@
     </div>
 </div>
 
+<div class="code-modal" id="codeModal">
+    <div class="code-box">
+        <h3>Capturez cet écran</h3>
+        <p>Ce code est nécessaire pour supprimer votre demande plus tard.</p>
+        <div class="code-value" id="codeValue"></div>
+        <button onclick="terminerPublication()">J’ai capturé l’écran</button>
+    </div>
+</div>
+
 <script>
+let urlRedirection = "demandes.html";
+
+function genererId(prefixe) {
+    return prefixe + "-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8);
+}
+
+function genererCodeSuppression() {
+    return Math.random().toString(36).slice(2, 8).toUpperCase();
+}
+
+function afficherCodeSuppression(code) {
+    document.getElementById("codeValue").textContent = code;
+    document.getElementById("codeModal").style.display = "flex";
+}
+
+function terminerPublication() {
+    window.location.href = urlRedirection;
+}
+
 window.onload = function() {
     let suggestion = localStorage.getItem("produitRechercheSuggestion");
 
@@ -401,13 +476,13 @@ document.getElementById("supprimerImage").addEventListener("click", function() {
 });
 
 function publierRecherche() {
-    let produit = document.getElementById("produit").value;
-    let budget = document.getElementById("budget").value;
+    let produit = document.getElementById("produit").value.trim();
+    let budget = document.getElementById("budget").value.trim();
     let indicatif = document.getElementById("indicatif").value;
-    let numero = document.getElementById("telephone").value;
+    let numero = document.getElementById("telephone").value.trim();
     let telephone = indicatif + " " + numero;
     let province = document.getElementById("province").value;
-    let description = document.getElementById("description").value;
+    let description = document.getElementById("description").value.trim();
     let imageInput = document.getElementById("image");
 
     if (produit === "" || numero === "" || province === "" || description === "") {
@@ -417,9 +492,10 @@ function publierRecherche() {
 
     let fichiers = imageInput.files;
     let images = [];
+    let deleteCode = genererCodeSuppression();
 
     if (fichiers.length === 0) {
-        sauvegarderRecherche(images);
+        sauvegarderRecherche(images, deleteCode);
         return;
     }
 
@@ -433,30 +509,31 @@ function publierRecherche() {
             fichiersTraites++;
 
             if (fichiersTraites === fichiers.length) {
-                sauvegarderRecherche(images);
+                sauvegarderRecherche(images, deleteCode);
             }
         };
 
         reader.readAsDataURL(fichiers[i]);
     }
 
-    function sauvegarderRecherche(images) {
+    function sauvegarderRecherche(images, deleteCode) {
         let recherche = {
+            id: genererId("recherche"),
             produit: produit,
             budget: budget,
             telephone: telephone,
             province: province,
             description: description,
             images: images,
-            datePublication: Date.now()
+            datePublication: Date.now(),
+            deleteCode: deleteCode
         };
 
         let recherches = JSON.parse(localStorage.getItem("recherches")) || [];
         recherches.push(recherche);
         localStorage.setItem("recherches", JSON.stringify(recherches));
 
-        alert("Recherche publiée avec succès !");
-        window.location.href = "demandes.html";
+        afficherCodeSuppression(deleteCode);
     }
 }
 </script>

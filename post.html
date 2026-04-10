@@ -213,6 +213,49 @@
         text-decoration: underline;
     }
 
+    .code-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.88);
+        z-index: 3000;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .code-box {
+        width: 100%;
+        max-width: 420px;
+        background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 24px;
+        padding: 24px;
+        text-align: center;
+    }
+
+    .code-box h3 {
+        margin: 0 0 10px 0;
+        font-size: 24px;
+    }
+
+    .code-box p {
+        margin: 0 0 16px 0;
+        color: #d4d4d8;
+        line-height: 1.5;
+    }
+
+    .code-value {
+        font-size: 34px;
+        font-weight: bold;
+        color: #f97316;
+        background: rgba(255,255,255,0.04);
+        border-radius: 18px;
+        padding: 16px;
+        margin-bottom: 16px;
+        letter-spacing: 2px;
+    }
+
     @media (max-width: 768px) {
         body {
             padding: 14px;
@@ -261,6 +304,10 @@
         select,
         button {
             font-size: 14px;
+        }
+
+        .code-value {
+            font-size: 28px;
         }
     }
     </style>
@@ -355,7 +402,35 @@
     </div>
 </div>
 
+<div class="code-modal" id="codeModal">
+    <div class="code-box">
+        <h3>Capturez cet écran</h3>
+        <p>Ce code est nécessaire pour supprimer votre annonce plus tard.</p>
+        <div class="code-value" id="codeValue"></div>
+        <button onclick="terminerPublication()">J’ai capturé l’écran</button>
+    </div>
+</div>
+
 <script>
+let urlRedirection = "index.html";
+
+function genererId(prefixe) {
+    return prefixe + "-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8);
+}
+
+function genererCodeSuppression() {
+    return Math.random().toString(36).slice(2, 8).toUpperCase();
+}
+
+function afficherCodeSuppression(code) {
+    document.getElementById("codeValue").textContent = code;
+    document.getElementById("codeModal").style.display = "flex";
+}
+
+function terminerPublication() {
+    window.location.href = urlRedirection;
+}
+
 document.getElementById("image").addEventListener("change", function(e) {
     let files = e.target.files;
     let preview = document.getElementById("preview");
@@ -391,25 +466,26 @@ document.getElementById("supprimerImage").addEventListener("click", function() {
 });
 
 function PublieruneAnnonce() {
-    let titre = document.getElementById("titre").value;
-    let prix = document.getElementById("prix").value;
+    let titre = document.getElementById("titre").value.trim();
+    let prix = document.getElementById("prix").value.trim();
     let indicatif = document.getElementById("indicatif").value;
-    let numero = document.getElementById("telephone").value;
+    let numero = document.getElementById("telephone").value.trim();
     let telephone = indicatif + " " + numero;
     let province = document.getElementById("province").value;
-    let Description = document.getElementById("description").value;
+    let description = document.getElementById("description").value.trim();
     let imageInput = document.getElementById("image");
 
-    if (titre === "" || prix === "" || numero === "" || province === "" || Description === "") {
+    if (titre === "" || prix === "" || numero === "" || province === "" || description === "") {
         alert("Veuillez remplir tous les champs.");
         return;
     }
 
     let fichiers = imageInput.files;
     let images = [];
+    let deleteCode = genererCodeSuppression();
 
     if (fichiers.length === 0) {
-        sauvegarderAnnonce(images);
+        sauvegarderAnnonce(images, deleteCode);
         return;
     }
 
@@ -423,30 +499,31 @@ function PublieruneAnnonce() {
             fichiersTraites++;
 
             if (fichiersTraites === fichiers.length) {
-                sauvegarderAnnonce(images);
+                sauvegarderAnnonce(images, deleteCode);
             }
         };
 
         reader.readAsDataURL(fichiers[i]);
     }
 
-    function sauvegarderAnnonce(images) {
+    function sauvegarderAnnonce(images, deleteCode) {
         let annonce = {
+            id: genererId("annonce"),
             titre: titre,
             prix: prix,
             telephone: telephone,
             province: province,
-            description: Description,
+            description: description,
             images: images,
-            datePublication: Date.now()
+            datePublication: Date.now(),
+            deleteCode: deleteCode
         };
 
         let annonces = JSON.parse(localStorage.getItem("annonces")) || [];
         annonces.push(annonce);
         localStorage.setItem("annonces", JSON.stringify(annonces));
 
-        alert("Produit publié avec succès !");
-        window.location.href = "index.html";
+        afficherCodeSuppression(deleteCode);
     }
 }
 </script>

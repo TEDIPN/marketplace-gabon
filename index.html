@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Marketplace Gabonaise</title>
+<title>Linka</title>
 <style>
 * {
     box-sizing: border-box;
@@ -424,12 +424,19 @@ button {
 }
 
 .btn-delete {
-    background: #ef4444;
+    width: 100%;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    padding: 12px;
+    border-radius: 12px;
     margin-top: 10px;
+    font-size: 14px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
 }
 
 .btn-delete:hover {
-    background: #dc2626;
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
 }
 
 .btn-fav {
@@ -589,14 +596,14 @@ button {
     <button class="menu-btn" onclick="toggleAboutMenu()">☰</button>
     <div class="about-menu" id="aboutMenu">
         <h3>À propos</h3>
-        <a href="mailto:atchougou6@gmail.com?subject=Contact%20Marketplace%20Gabonaise">Me contacter par mail</a>
-        <a href="https://wa.me/241074552389?text=Bonjour,%20je%20veux%20signaler%20un%20bug%20sur%20la%20Marketplace%20Gabonaise." target="_blank">Signaler un bug</a>
+        <a href="mailto:atchougou6@gmail.com?subject=Contact%20Linka">Me contacter par mail</a>
+        <a href="https://wa.me/241074552389?text=Bonjour,%20je%20veux%20signaler%20un%20bug%20sur%20Linka." target="_blank">Signaler un bug</a>
     </div>
 </div>
 
 <div class="page-container">
     <section class="hero">
-        <h1>Marketplace Gabonaise</h1>
+        <h1>Linka</h1>
 
         <div class="search-box">
             <input
@@ -657,10 +664,33 @@ button {
     <div id="annonces"></div>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.0/firebase-app.js";
+import {
+    getFirestore,
+    collection,
+    getDocs,
+    deleteDoc,
+    doc
+} from "https://www.gstatic.com/firebasejs/12.2.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCHIqR65GqQBdM0vxPAaX-0ZB_qtF52968",
+    authDomain: "linka-market.firebaseapp.com",
+    projectId: "linka-market",
+    storageBucket: "linka-market.firebasestorage.app",
+    messagingSenderId: "871011074342",
+    appId: "1:871011074342:web:d55d7240796f10d20c01e7",
+    measurementId: "G-K1WTW2CB47"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 let ordreTri = "aucun";
 let provinceSelectionnee = "";
 let afficherSeulementFavoris = false;
+let annoncesFirestore = [];
 
 function getAnnonceKey(annonce, index) {
     return annonce.id ? annonce.id : "legacy-annonce-" + index;
@@ -673,7 +703,7 @@ function mettreAJourBadgeDemandes() {
 
 function toggleAboutMenu() {
     let menu = document.getElementById("aboutMenu");
-    menu.style.display = menu.style.display === "block" ? "block" : "block";
+
     if (menu.dataset.open === "true") {
         menu.style.display = "none";
         menu.dataset.open = "false";
@@ -683,8 +713,27 @@ function toggleAboutMenu() {
     }
 }
 
+async function chargerAnnoncesDepuisFirebase() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "annonces"));
+        annoncesFirestore = [];
+
+        querySnapshot.forEach((docSnap) => {
+            annoncesFirestore.push({
+                id: docSnap.id,
+                ...docSnap.data()
+            });
+        });
+
+        localStorage.setItem("annonces", JSON.stringify(annoncesFirestore));
+    } catch (error) {
+        console.error("Erreur chargement annonces :", error);
+        annoncesFirestore = JSON.parse(localStorage.getItem("annonces")) || [];
+    }
+}
+
 function afficherAnnonces() {
-    let annoncesStockees = JSON.parse(localStorage.getItem("annonces")) || [];
+    let annoncesStockees = [...annoncesFirestore];
     let container = document.getElementById("annonces");
     let suggestionZone = document.getElementById("suggestionRecherche");
     let inputRecherche = document.getElementById("rechercheAnnonce");
@@ -695,10 +744,8 @@ function afficherAnnonces() {
         recherche = inputRecherche.value.toLowerCase().trim();
     }
 
-    let annoncesFiltrees = [...annoncesStockees];
-
     if (ordreTri === "croissant") {
-        annoncesFiltrees.sort(function(a, b) {
+        annoncesStockees.sort(function(a, b) {
             let prixA = parseFloat((a.prix || "").replace(/,/g, "").replace(/\s/g, "")) || 0;
             let prixB = parseFloat((b.prix || "").replace(/,/g, "").replace(/\s/g, "")) || 0;
             return prixA - prixB;
@@ -706,7 +753,7 @@ function afficherAnnonces() {
     }
 
     if (ordreTri === "decroissant") {
-        annoncesFiltrees.sort(function(a, b) {
+        annoncesStockees.sort(function(a, b) {
             let prixA = parseFloat((a.prix || "").replace(/,/g, "").replace(/\s/g, "")) || 0;
             let prixB = parseFloat((b.prix || "").replace(/,/g, "").replace(/\s/g, "")) || 0;
             return prixB - prixA;
@@ -718,12 +765,12 @@ function afficherAnnonces() {
     document.body.classList.remove("mode-recherche-vide");
     let resultatsTrouves = 0;
 
-    for (let i = 0; i < annoncesFiltrees.length; i++) {
-        let titre = (annoncesFiltrees[i].titre || "").toLowerCase();
-        let description = (annoncesFiltrees[i].description || "").toLowerCase();
-        let provinceAnnonce = annoncesFiltrees[i].province || "";
-        let vraiIndex = annoncesStockees.indexOf(annoncesFiltrees[i]);
-        let favori = estFavori(annoncesFiltrees[i], vraiIndex);
+    for (let i = 0; i < annoncesStockees.length; i++) {
+        let annonceItem = annoncesStockees[i];
+        let titre = (annonceItem.titre || "").toLowerCase();
+        let description = (annonceItem.description || "").toLowerCase();
+        let provinceAnnonce = annonceItem.province || "";
+        let favori = estFavori(annonceItem, i);
 
         if (
             (titre.includes(recherche) || description.includes(recherche) || recherche === "") &&
@@ -736,17 +783,16 @@ function afficherAnnonces() {
             annonce.classList.add("annonce");
 
             let imageHTML = "";
-
-            if (annoncesFiltrees[i].images && annoncesFiltrees[i].images.length > 0) {
-                imageHTML = "<img src='" + annoncesFiltrees[i].images[0] + "'>";
-            } else if (annoncesFiltrees[i].image) {
-                imageHTML = "<img src='" + annoncesFiltrees[i].image + "'>";
+            if (annonceItem.images && annonceItem.images.length > 0) {
+                imageHTML = "<img src='" + annonceItem.images[0] + "'>";
+            } else if (annonceItem.image) {
+                imageHTML = "<img src='" + annonceItem.image + "'>";
             }
 
-            let numero = (annoncesFiltrees[i].telephone || "").replace(/\s/g, "").replace("+", "");
+            let numero = (annonceItem.telephone || "").replace(/\s/g, "").replace("+", "");
             let badgeNouveau = "";
 
-            if (annoncesFiltrees[i].datePublication && (Date.now() - annoncesFiltrees[i].datePublication < 86400000)) {
+            if (annonceItem.datePublication && (Date.now() - annonceItem.datePublication < 86400000)) {
                 badgeNouveau = "<span class='badge-nouveau'>Nouveau</span>";
             }
 
@@ -765,23 +811,24 @@ function afficherAnnonces() {
             annonce.innerHTML =
                 imageHTML +
                 badgeNouveau +
-                "<h3>" + annoncesFiltrees[i].titre + "</h3>" +
-                "<p class='prix'>" + annoncesFiltrees[i].prix + " FCFA</p>" +
-                "<p>📞 " + annoncesFiltrees[i].telephone + "</p>" +
-                "<p><strong>Province :</strong> " + (annoncesFiltrees[i].province || "Non précisée") + "</p>" +
-                "<p>" + annoncesFiltrees[i].description + "</p>" +
+                "<h3>" + (annonceItem.titre || "") + "</h3>" +
+                "<p class='prix'>" + (annonceItem.prix || "") + " FCFA</p>" +
+                "<p>📞 " + (annonceItem.telephone || "") + "</p>" +
+                "<p><strong>Province :</strong> " + (annonceItem.province || "Non précisée") + "</p>" +
+                "<p>" + (annonceItem.description || "") + "</p>" +
                 "<div class='actions'>" +
-                    "<button class='btn-fav' onclick='event.stopPropagation(); toggleFavori(" + vraiIndex + ")'>" +
-                        (estFavori(annoncesFiltrees[i], vraiIndex) ? "❤️" : "🤍") +
+                    "<button class='btn-fav' onclick='event.stopPropagation(); toggleFavori(" + i + ")'>" +
+                        (estFavori(annonceItem, i) ? "❤️" : "🤍") +
                     "</button>" +
                     boutonAppel +
                     boutonWhatsApp +
-                    "<button class='btn-delete' onclick='event.stopPropagation(); supprimerAnnonce(" + vraiIndex + ")'>Supprimer</button>" +
+                    "<button class='btn-delete' onclick='event.stopPropagation(); supprimerAnnonce(" + i + ")'>Supprimer</button>" +
                 "</div>";
 
             annonce.style.cursor = "pointer";
             annonce.onclick = function() {
-                localStorage.setItem("produitSelectionne", vraiIndex);
+                localStorage.setItem("produitSelectionne", i);
+                localStorage.setItem("annonces", JSON.stringify(annoncesStockees));
                 window.location.href = "produit.html";
             };
 
@@ -831,36 +878,40 @@ function allerVersDemande(texte) {
     window.location.href = "recherche.html";
 }
 
-function supprimerAnnonce(index) {
-    let annonces = JSON.parse(localStorage.getItem("annonces")) || [];
-    let annonce = annonces[index];
-
+async function supprimerAnnonce(index) {
+    let annonce = annoncesFirestore[index];
     if (!annonce) return;
 
     if (!annonce.deleteCode) {
-        alert("Cette annonce n'a pas de code de suppression. Republie-la avec le nouveau système.");
+        alert("Cette annonce n'a pas encore de code de suppression.");
         return;
     }
 
     let code = prompt("Entre le code de suppression de cette annonce :");
     if (code === null) return;
 
-    if (code.trim() !== annonce.deleteCode) {
+    if (code.trim() !== String(annonce.deleteCode).trim()) {
         alert("Code incorrect.");
         return;
     }
 
-    annonces.splice(index, 1);
-    localStorage.setItem("annonces", JSON.stringify(annonces));
+    try {
+        await deleteDoc(doc(db, "annonces", annonce.id));
 
-    let favoris = JSON.parse(localStorage.getItem("favoris")) || [];
-    let cle = getAnnonceKey(annonce, index);
-    favoris = favoris.filter(function(item) {
-        return item !== cle;
-    });
-    localStorage.setItem("favoris", JSON.stringify(favoris));
+        let favoris = JSON.parse(localStorage.getItem("favoris")) || [];
+        let cle = getAnnonceKey(annonce, index);
+        favoris = favoris.filter(function(item) {
+            return item !== cle;
+        });
+        localStorage.setItem("favoris", JSON.stringify(favoris));
 
-    afficherAnnonces();
+        await chargerAnnoncesDepuisFirebase();
+        afficherAnnonces();
+        alert("Annonce supprimée avec succès.");
+    } catch (error) {
+        console.error("Erreur suppression :", error);
+        alert("Erreur lors de la suppression.");
+    }
 }
 
 function trierPrixCroissant() {
@@ -901,8 +952,7 @@ function fermerFiltres() {
 }
 
 function toggleFavori(index) {
-    let annonces = JSON.parse(localStorage.getItem("annonces")) || [];
-    let annonce = annonces[index];
+    let annonce = annoncesFirestore[index];
     if (!annonce) return;
 
     let favoris = JSON.parse(localStorage.getItem("favoris")) || [];
@@ -936,6 +986,22 @@ function reinitialiserFavoris() {
     afficherAnnonces();
 }
 
+window.toggleAboutMenu = toggleAboutMenu;
+window.toggleFiltres = toggleFiltres;
+window.trierPrixCroissant = trierPrixCroissant;
+window.trierPrixDecroissant = trierPrixDecroissant;
+window.reinitialiserTri = reinitialiserTri;
+window.filtrerParProvince = filtrerParProvince;
+window.reinitialiserProvince = reinitialiserProvince;
+window.fermerFiltres = fermerFiltres;
+window.filtrerFavoris = filtrerFavoris;
+window.reinitialiserFavoris = reinitialiserFavoris;
+window.retourAccueil = retourAccueil;
+window.allerVersDemande = allerVersDemande;
+window.toggleFavori = toggleFavori;
+window.supprimerAnnonce = supprimerAnnonce;
+window.afficherAnnonces = afficherAnnonces;
+
 window.onclick = function(e) {
     let menu = document.getElementById("menuFiltres");
     let zone = document.querySelector(".filtres-zone");
@@ -952,10 +1018,12 @@ window.onclick = function(e) {
     }
 };
 
-window.onload = function() {
+window.onload = async function() {
     mettreAJourBadgeDemandes();
+    await chargerAnnoncesDepuisFirebase();
     afficherAnnonces();
 };
 </script>
+
 </body>
 </html>

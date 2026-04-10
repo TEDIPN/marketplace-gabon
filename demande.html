@@ -301,13 +301,13 @@ if (demande) {
     container.innerHTML =
         galerieHTML +
         badgeNouveau +
-        "<h1>" + demande.produit + "</h1>" +
+        "<h1>" + (demande.produit || "Produit recherché") + "</h1>" +
         "<p class='prix'>" + (demande.budget ? demande.budget + " FCFA" : "Budget non précisé") + "</p>" +
 
         "<div class='infos'>" +
             "<div class='info-card'>" +
                 "<div class='info-label'>Téléphone</div>" +
-                "<div class='info-value'>" + demande.telephone + "</div>" +
+                "<div class='info-value'>" + (demande.telephone || "Non précisé") + "</div>" +
             "</div>" +
             "<div class='info-card'>" +
                 "<div class='info-label'>Province</div>" +
@@ -317,7 +317,7 @@ if (demande) {
 
         "<div class='description-box'>" +
             "<div class='description-title'>Description</div>" +
-            "<div class='description-text'>" + demande.description + "</div>" +
+            "<div class='description-text'>" + (demande.description || "Aucune description") + "</div>" +
         "</div>" +
 
         "<div class='actions'>" +
@@ -326,7 +326,10 @@ if (demande) {
             "<a href='https://wa.me/" + numero + "' target='_blank'><button class='btn-whatsapp'>WhatsApp</button></a>" +
         "</div>";
 } else {
-    container.innerHTML = "<p>Produit recherché introuvable.</p><a href='demandes.html'><button>Retour</button></a>";
+    container.innerHTML = `
+        <p>Produit recherché introuvable.</p>
+        <a href='demandes.html'><button>Retour</button></a>
+    `;
 }
 
 function ouvrirImage(src) {

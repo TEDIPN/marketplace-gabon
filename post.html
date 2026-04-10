@@ -232,6 +232,7 @@
         border-radius: 24px;
         padding: 24px;
         text-align: center;
+        box-shadow: 0 14px 34px rgba(0,0,0,0.38);
     }
 
     .code-box h3 {
@@ -254,6 +255,7 @@
         padding: 16px;
         margin-bottom: 16px;
         letter-spacing: 2px;
+        user-select: all;
     }
 
     @media (max-width: 768px) {
@@ -411,25 +413,28 @@
     </div>
 </div>
 
-<script>
-let urlRedirection = "index.html";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.0/firebase-app.js";
+import {
+    getFirestore,
+    collection,
+    addDoc
+} from "https://www.gstatic.com/firebasejs/12.2.0/firebase-firestore.js";
 
-function genererId(prefixe) {
-    return prefixe + "-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8);
-}
+const firebaseConfig = {
+    apiKey: "AIzaSyCHIqR65GqQBdM0vxPAaX-OZB_qtF52968",
+    authDomain: "linka-market.firebaseapp.com",
+    projectId: "linka-market",
+    storageBucket: "linka-market.firebasestorage.app",
+    messagingSenderId: "871011074342",
+    appId: "1:871011074342:web:d55d7240796f10d20c01e7",
+    measurementId: "G-K1WTW2CB47"
+};
 
-function genererCodeSuppression() {
-    return Math.random().toString(36).slice(2, 8).toUpperCase();
-}
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-function afficherCodeSuppression(code) {
-    document.getElementById("codeValue").textContent = code;
-    document.getElementById("codeModal").style.display = "flex";
-}
-
-function terminerPublication() {
-    window.location.href = urlRedirection;
-}
+let redirectionApresPublication = "index.html";
 
 document.getElementById("image").addEventListener("change", function(e) {
     let files = e.target.files;
@@ -465,7 +470,40 @@ document.getElementById("supprimerImage").addEventListener("click", function() {
     boutonSupprimer.style.display = "none";
 });
 
-function PublieruneAnnonce() {
+function afficherCode(code) {
+    document.getElementById("codeValue").textContent = code;
+    document.getElementById("codeModal").style.display = "flex";
+}
+
+function terminerPublication() {
+    window.location.href = redirectionApresPublication;
+}
+
+async function convertirImagesEnBase64(fichiers) {
+    let promesses = [];
+
+    for (let i = 0; i < fichiers.length; i++) {
+        promesses.push(
+            new Promise((resolve, reject) => {
+                let reader = new FileReader();
+
+                reader.onload = function(event) {
+                    resolve(event.target.result);
+                };
+
+                reader.onerror = function() {
+                    reject(new Error("Erreur lors de la lecture d’une image."));
+                };
+
+                reader.readAsDataURL(fichiers[i]);
+            })
+        );
+    }
+
+    return Promise.all(promesses);
+}
+
+async function PublieruneAnnonce() {
     let titre = document.getElementById("titre").value.trim();
     let prix = document.getElementById("prix").value.trim();
     let indicatif = document.getElementById("indicatif").value;
@@ -480,35 +518,15 @@ function PublieruneAnnonce() {
         return;
     }
 
-    let fichiers = imageInput.files;
+    let deleteCode = Math.floor(100000 + Math.random() * 900000).toString();
     let images = [];
-    let deleteCode = genererCodeSuppression();
 
-    if (fichiers.length === 0) {
-        sauvegarderAnnonce(images, deleteCode);
-        return;
-    }
+    try {
+        if (imageInput.files.length > 0) {
+            images = await convertirImagesEnBase64(imageInput.files);
+        }
 
-    let fichiersTraites = 0;
-
-    for (let i = 0; i < fichiers.length; i++) {
-        let reader = new FileReader();
-
-        reader.onload = function(event) {
-            images.push(event.target.result);
-            fichiersTraites++;
-
-            if (fichiersTraites === fichiers.length) {
-                sauvegarderAnnonce(images, deleteCode);
-            }
-        };
-
-        reader.readAsDataURL(fichiers[i]);
-    }
-
-    function sauvegarderAnnonce(images, deleteCode) {
         let annonce = {
-            id: genererId("annonce"),
             titre: titre,
             prix: prix,
             telephone: telephone,
@@ -519,13 +537,18 @@ function PublieruneAnnonce() {
             deleteCode: deleteCode
         };
 
-        let annonces = JSON.parse(localStorage.getItem("annonces")) || [];
-        annonces.push(annonce);
-        localStorage.setItem("annonces", JSON.stringify(annonces));
+        await addDoc(collection(db, "annonces"), annonce);
 
-        afficherCodeSuppression(deleteCode);
+        afficherCode(deleteCode);
+
+    } catch (error) {
+        console.error("Erreur Firebase :", error);
+        alert("Erreur lors de la publication.");
     }
 }
+
+window.PublieruneAnnonce = PublieruneAnnonce;
+window.terminerPublication = terminerPublication;
 </script>
 
 </body>

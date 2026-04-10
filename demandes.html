@@ -327,12 +327,19 @@
         }
 
         .btn-delete {
-            background: #ef4444;
+            width: 100%;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
             margin-top: 10px;
+            font-size: 14px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.25);
         }
 
         .btn-delete:hover {
-            background: #dc2626;
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
         }
 
         .badge-nouveau {
@@ -445,8 +452,8 @@
     <button class="menu-btn" onclick="toggleAboutMenu()">☰</button>
     <div class="about-menu" id="aboutMenu">
         <h3>À propos</h3>
-        <a href="mailto:atchougou6@gmail.com?subject=Contact%20Marketplace%20Gabonaise">Me contacter par mail</a>
-        <a href="https://wa.me/241074552389?text=Bonjour,%20je%20veux%20signaler%20un%20bug%20sur%20la%20Marketplace%20Gabonaise." target="_blank">Signaler un bug</a>
+        <a href="mailto:atchougou6@gmail.com?subject=Contact%20Linka">Me contacter par mail</a>
+        <a href="https://wa.me/241074552389?text=Bonjour,%20je%20veux%20signaler%20un%20bug%20sur%20Linka." target="_blank">Signaler un bug</a>
     </div>
 </div>
 
@@ -500,9 +507,32 @@
 
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.0/firebase-app.js";
+import {
+    getFirestore,
+    collection,
+    getDocs,
+    deleteDoc,
+    doc
+} from "https://www.gstatic.com/firebasejs/12.2.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCHIqR65GqQBdM0vxPAaX-OZB_qtF52968",
+    authDomain: "linka-market.firebaseapp.com",
+    projectId: "linka-market",
+    storageBucket: "linka-market.firebasestorage.app",
+    messagingSenderId: "871011074342",
+    appId: "1:871011074342:web:d55d7240796f10d20c01e7",
+    measurementId: "G-K1WTW2CB47"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 let ordreTri = "aucun";
 let provinceSelectionnee = "";
+let demandesFirestore = [];
 
 function toggleAboutMenu() {
     let menu = document.getElementById("aboutMenu");
@@ -515,15 +545,32 @@ function toggleAboutMenu() {
     }
 }
 
+async function chargerDemandesDepuisFirebase() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "recherches"));
+        demandesFirestore = [];
+
+        querySnapshot.forEach((docSnap) => {
+            demandesFirestore.push({
+                id: docSnap.id,
+                ...docSnap.data()
+            });
+        });
+
+        localStorage.setItem("recherches", JSON.stringify(demandesFirestore));
+    } catch (error) {
+        console.error("Erreur chargement demandes :", error);
+        demandesFirestore = JSON.parse(localStorage.getItem("recherches")) || [];
+    }
+}
+
 function afficherDemandes() {
-    let demandesStockees = JSON.parse(localStorage.getItem("recherches")) || [];
+    let demandesStockees = [...demandesFirestore];
     let container = document.getElementById("demandes");
     let compteur = document.getElementById("compteurDemandes");
 
-    let demandesFiltrees = [...demandesStockees];
-
     if (ordreTri === "croissant") {
-        demandesFiltrees.sort(function(a, b) {
+        demandesStockees.sort(function(a, b) {
             let budgetA = parseFloat((a.budget || "0").replace(/,/g, "").replace(/\s/g, "")) || 0;
             let budgetB = parseFloat((b.budget || "0").replace(/,/g, "").replace(/\s/g, "")) || 0;
             return budgetA - budgetB;
@@ -531,7 +578,7 @@ function afficherDemandes() {
     }
 
     if (ordreTri === "decroissant") {
-        demandesFiltrees.sort(function(a, b) {
+        demandesStockees.sort(function(a, b) {
             let budgetA = parseFloat((a.budget || "0").replace(/,/g, "").replace(/\s/g, "")) || 0;
             let budgetB = parseFloat((b.budget || "0").replace(/,/g, "").replace(/\s/g, "")) || 0;
             return budgetB - budgetA;
@@ -541,8 +588,9 @@ function afficherDemandes() {
     container.innerHTML = "";
     let resultatsTrouves = 0;
 
-    for (let i = 0; i < demandesFiltrees.length; i++) {
-        let provinceDemande = demandesFiltrees[i].province || "";
+    for (let i = 0; i < demandesStockees.length; i++) {
+        let demandeItem = demandesStockees[i];
+        let provinceDemande = demandeItem.province || "";
 
         if (provinceSelectionnee === "" || provinceDemande === provinceSelectionnee) {
             resultatsTrouves++;
@@ -550,11 +598,10 @@ function afficherDemandes() {
             let demande = document.createElement("div");
             demande.classList.add("demande");
 
-            let vraiIndex = demandesStockees.indexOf(demandesFiltrees[i]);
-            let numero = (demandesFiltrees[i].telephone || "").replace(/\s/g, "").replace("+", "");
+            let numero = (demandeItem.telephone || "").replace(/\s/g, "").replace("+", "");
             let badgeNouveau = "";
 
-            if (demandesFiltrees[i].datePublication && (Date.now() - demandesFiltrees[i].datePublication < 86400000)) {
+            if (demandeItem.datePublication && (Date.now() - demandeItem.datePublication < 86400000)) {
                 badgeNouveau = "<span class='badge-nouveau'>Nouveau</span>";
             }
 
@@ -571,24 +618,25 @@ function afficherDemandes() {
             `;
 
             demande.innerHTML =
-                (demandesFiltrees[i].images && demandesFiltrees[i].images.length > 0
-                    ? "<img src='" + demandesFiltrees[i].images[0] + "'>"
-                    : (demandesFiltrees[i].image ? "<img src='" + demandesFiltrees[i].image + "'>" : "")) +
+                (demandeItem.images && demandeItem.images.length > 0
+                    ? "<img src='" + demandeItem.images[0] + "'>"
+                    : (demandeItem.image ? "<img src='" + demandeItem.image + "'>" : "")) +
                 badgeNouveau +
-                "<h3>" + demandesFiltrees[i].produit + "</h3>" +
-                "<p class='prix'>" + (demandesFiltrees[i].budget ? demandesFiltrees[i].budget + " FCFA" : "Budget non précisé") + "</p>" +
-                "<p>📞 " + demandesFiltrees[i].telephone + "</p>" +
-                "<p><strong>Province :</strong> " + (demandesFiltrees[i].province || "Non précisée") + "</p>" +
-                "<p>" + demandesFiltrees[i].description + "</p>" +
+                "<h3>" + (demandeItem.produit || "") + "</h3>" +
+                "<p class='prix'>" + (demandeItem.budget ? demandeItem.budget + " FCFA" : "Budget non précisé") + "</p>" +
+                "<p>📞 " + (demandeItem.telephone || "") + "</p>" +
+                "<p><strong>Province :</strong> " + (demandeItem.province || "Non précisée") + "</p>" +
+                "<p>" + (demandeItem.description || "") + "</p>" +
                 "<div class='actions'>" +
                     boutonAppel +
                     boutonWhatsApp +
-                    "<button class='btn-delete' onclick='event.stopPropagation(); supprimerDemande(" + vraiIndex + ")'>Supprimer</button>" +
+                    "<button class='btn-delete' onclick='event.stopPropagation(); supprimerDemande(" + i + ")'>Supprimer</button>" +
                 "</div>";
 
             demande.style.cursor = "pointer";
             demande.onclick = function() {
-                localStorage.setItem("demandeSelectionnee", vraiIndex);
+                localStorage.setItem("demandeSelectionnee", i);
+                localStorage.setItem("recherches", JSON.stringify(demandesStockees));
                 window.location.href = "demande.html";
             };
 
@@ -610,28 +658,32 @@ function afficherDemandes() {
     }
 }
 
-function supprimerDemande(index) {
-    let recherches = JSON.parse(localStorage.getItem("recherches")) || [];
-    let demande = recherches[index];
-
+async function supprimerDemande(index) {
+    let demande = demandesFirestore[index];
     if (!demande) return;
 
     if (!demande.deleteCode) {
-        alert("Cette demande n'a pas de code de suppression. Republie-la avec le nouveau système.");
+        alert("Cette demande n'a pas encore de code de suppression.");
         return;
     }
 
     let code = prompt("Entre le code de suppression de cette demande :");
     if (code === null) return;
 
-    if (code.trim() !== demande.deleteCode) {
+    if (code.trim() !== String(demande.deleteCode).trim()) {
         alert("Code incorrect.");
         return;
     }
 
-    recherches.splice(index, 1);
-    localStorage.setItem("recherches", JSON.stringify(recherches));
-    afficherDemandes();
+    try {
+        await deleteDoc(doc(db, "recherches", demande.id));
+        await chargerDemandesDepuisFirebase();
+        afficherDemandes();
+        alert("Demande supprimée avec succès.");
+    } catch (error) {
+        console.error("Erreur suppression :", error);
+        alert("Erreur lors de la suppression.");
+    }
 }
 
 function trierPrixCroissant() {
@@ -671,6 +723,16 @@ function fermerFiltres() {
     document.getElementById("menuFiltres").style.display = "none";
 }
 
+window.toggleAboutMenu = toggleAboutMenu;
+window.toggleFiltres = toggleFiltres;
+window.trierPrixCroissant = trierPrixCroissant;
+window.trierPrixDecroissant = trierPrixDecroissant;
+window.reinitialiserTri = reinitialiserTri;
+window.filtrerParProvince = filtrerParProvince;
+window.reinitialiserProvince = reinitialiserProvince;
+window.fermerFiltres = fermerFiltres;
+window.supprimerDemande = supprimerDemande;
+
 window.onclick = function(e) {
     let menu = document.getElementById("menuFiltres");
     let zone = document.querySelector(".filtres-zone");
@@ -687,7 +749,10 @@ window.onclick = function(e) {
     }
 };
 
-window.onload = afficherDemandes;
+window.onload = async function() {
+    await chargerDemandesDepuisFirebase();
+    afficherDemandes();
+};
 </script>
 
 </body>

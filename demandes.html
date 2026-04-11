@@ -752,6 +752,7 @@ window.onclick = function(e) {
 window.onload = async function() {
     await chargerDemandesDepuisFirebase();
     afficherDemandes();
+    localStorage.setItem("forceRefreshBadgeDemandes", Date.now().toString());
 };
 </script>
 

@@ -670,6 +670,7 @@ import {
     getFirestore,
     collection,
     getDocs,
+    getCountFromServer,
     deleteDoc,
     doc
 } from "https://www.gstatic.com/firebasejs/12.2.0/firebase-firestore.js";
@@ -696,9 +697,14 @@ function getAnnonceKey(annonce, index) {
     return annonce.id ? annonce.id : "legacy-annonce-" + index;
 }
 
-function mettreAJourBadgeDemandes() {
-    let demandes = JSON.parse(localStorage.getItem("recherches")) || [];
-    document.getElementById("badgeDemandes").textContent = demandes.length;
+async function mettreAJourBadgeDemandes() {
+    try {
+        const snapshot = await getCountFromServer(collection(db, "recherches"));
+        document.getElementById("badgeDemandes").textContent = snapshot.data().count;
+    } catch (error) {
+        console.error("Erreur compteur demandes :", error);
+        document.getElementById("badgeDemandes").textContent = "0";
+    }
 }
 
 function toggleAboutMenu() {
@@ -1019,7 +1025,7 @@ window.onclick = function(e) {
 };
 
 window.onload = async function() {
-    mettreAJourBadgeDemandes();
+    await mettreAJourBadgeDemandes();
     await chargerAnnoncesDepuisFirebase();
     afficherAnnonces();
 };

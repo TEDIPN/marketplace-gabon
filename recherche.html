@@ -531,6 +531,28 @@ async function compresserImage(file, maxWidth = 1200, quality = 0.7) {
     });
 }
 
+async function convertirImagesEnBase64(fichiers) {
+    let images = [];
+
+    for (let i = 0; i < fichiers.length; i++) {
+        const file = fichiers[i];
+
+        if (!file.type.startsWith("image/")) {
+            throw new Error("Un fichier n’est pas une image.");
+        }
+
+        const imageCompressee = await compresserImage(file, 900, 0.6);
+
+        if (imageCompressee.length > 1500000) {
+            throw new Error("Image trop lourde, choisis une image plus légère.");
+        }
+
+        images.push(imageCompressee);
+    }
+
+    return images;
+}
+
 async function publierRecherche() {
     let produit = document.getElementById("produit").value.trim();
     let budget = document.getElementById("budget").value.trim();
